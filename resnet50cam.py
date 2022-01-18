@@ -65,6 +65,7 @@ class ResNet50(nn.Module):
 if __name__ == '__main__':
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     net = ResNet50().to(device=device)
+    net.eval()
 
     """
     pil_img: PIL image of a dog and a cat
