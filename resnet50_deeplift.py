@@ -1,4 +1,4 @@
-from src.adjusted_model_component import BasicBlockAdjusted
+from src.adjusted_model_component import BottleneckAdjusted
 from src.utils import tonumpy, get_image, show_attribute, show_attribute2, process_color_heatmaps
 
 import torch
@@ -12,7 +12,7 @@ class Resnet50c(nn.Module):
     def __init__(self):
         super(Resnet50c, self).__init__()
     
-        self.backbone = mod.resnet34(pretrained=True, progress=False)
+        self.backbone = mod.resnet50(pretrained=True, progress=False)
 
         self.adjust_for_captum_problem()
         # self.print_after_captum_adjustment() # or debugging
@@ -61,9 +61,9 @@ class Resnet50c(nn.Module):
         for i,(layer_name,m) in enumerate(self.backbone.named_children()):    
             if type(m) == nn.Sequential:
                 for j,(sublayer_name,m2) in enumerate(m.named_children()):
-                    if type(m2) == mod.resnet.BasicBlock:
+                    if type(m2) == mod.resnet.Bottleneck:
                         # setattr(getattr(getattr(self.backbone, layer_name), sublayer_name),'relu', nn.ReLU())
-                        temp = BasicBlockAdjusted()
+                        temp = BottleneckAdjusted()
                         temp.inherit_weights(m2)
                         setattr(getattr(self.backbone, layer_name), sublayer_name, temp)
 
